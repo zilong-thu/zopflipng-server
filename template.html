@@ -2,6 +2,7 @@
 <html>
 <head>
   <title></title>
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <style type="text/css">
     body {
@@ -13,13 +14,17 @@
       max-height: 300px;
       max-width: 100%;
     }
+
+    .left {
+      border-right: 1px solid #eee;
+    }
   </style>
   <link href="https://v4.bootcss.com/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
   <div class="container">
     <div class="report">
-
+      <div><label>PNG图片总数量：</label>{{files.length}}</div>
     </div>
     <ul class="list-group">
       <li class="list-group-item">
@@ -30,21 +35,27 @@
       </li>
       {% for item in files %}
         <li class="list-group-item">
-          <p>文件路径：{{item.filename}}</p>
+          <p>文件路径：{{item.img}}</p>
           <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-6 left">
               <img src="{{ item.img }}" />
               <div>{{ item.stats.size }} bytes</div>
-              <button class="btn btn-primary">zopflipng</button>
+              <button class="btn btn-primary" data-src="{{ item.img }}">zopflipng</button>
             </div>
-            <div class="col-sm-6"></div>
+            <div class="col-sm-6">
+              {% if item.compressed %}
+                <img src="{{ item.compressed.url }}">
+                <div>{{ item.compressed.stats.size }} bytes</div>
+              {% endif %}
+            </div>
           </div>
         </li>
       {% endfor %}
     </ul>
   </div>
-<script type="text/javascript">
-  
-</script>
+
+<script type="text/javascript" src="/js/jquery.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="text/javascript" src="/js/app.js"></script>
 </body>
 </html>
