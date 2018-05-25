@@ -1,15 +1,15 @@
-const fs       = require('fs');
-const path     = require('path');
-const Koa      = require('koa');
-const glob     = require("glob");
-const serve    = require('koa-static');
-const nunjucks = require('nunjucks');
-const Router   = require('koa-router');
+const fs         = require('fs');
+const path       = require('path');
+const crypto     = require('crypto');
+const Koa        = require('koa');
+const glob       = require("glob");
+const serve      = require('koa-static');
+const nunjucks   = require('nunjucks');
+const Router     = require('koa-router');
 const bodyParser = require('koa-bodyparser');
-const util     = require('util');
-const exec     = util.promisify(require('child_process').exec);
-const mkdirp   = require('mkdirp');
-
+const util       = require('util');
+const mkdirp     = require('mkdirp');
+const exec       = util.promisify(require('child_process').exec);
 
 const app = new Koa();
 app.use(bodyParser());
@@ -17,8 +17,13 @@ nunjucks.configure({
   noCache: true,
 });
 
+// 要被压缩的目录
 const ImageRoot  = '../qcs.fe.activity/src';
-const targetRoot = './static/compressed';
+
+const md5 = crypto.createHash('md5');
+const targetDirHash = md5.update(path.resolve(ImageRoot)).digest('hex');
+// 本地文件夹目录
+const targetRoot = './compressed/' + targetDirHash;
 
 // Array: ['{ImageRoot}/page/activity/citySetup/assets/coupon_p1.png', ...]
 function getAllFiles() {
@@ -34,7 +39,7 @@ function getAllFiles() {
     const t = targetRoot + item.img;
     if (fs.existsSync(t)) {
       item.compressed = {
-        url: t.replace('./static', ''),
+        url: t.replace('./compressed', ''),
         stats: fs.statSync(t),
       };
     } else {
@@ -49,6 +54,7 @@ function getAllFiles() {
 
 app.use(serve(ImageRoot));
 app.use(serve('./static'));
+app.use(serve('./compressed'));
 
 var router = new Router();
 
@@ -66,9 +72,9 @@ router.post('/api/compress-img', async (ctx, next) => {
   const fileAbsolutePath = path.resolve(ImageRoot + file);
 
   // 目标文件夹
-  const targetDir = './static/compressed' + path.dirname(file);
+  const targetDir = './compressed/' + targetDirHash + path.dirname(file);
   mkdirp.sync(targetDir);
-  const targetFile = './static/compressed' + file;
+  const targetFile = './compressed/' + targetDirHash + file;
 
   try {
     fs.unlinkSync(targetFile);
@@ -84,7 +90,7 @@ router.post('/api/compress-img', async (ctx, next) => {
     success: true,
     message: res,
     data: {
-      url: targetFile.replace('./static', ''),
+      url: targetFile.replace('./compressed', ''),
       stats: fs.statSync(targetFile),
     }
   };
@@ -94,7 +100,11 @@ app.use(router.routes())
   .use(router.allowedMethods());
 
 app.use(async ctx => {
-  const res = nunjucks.render('./template.html', { files: getAllFiles() });
+  const res = nunjucks.render('./template.html', {
+    files: getAllFiles(),
+    workingDir: path.resolve(ImageRoot),
+    compressedDir: path.resolve(targetRoot),
+  });
   ctx.body = res;
 });
 

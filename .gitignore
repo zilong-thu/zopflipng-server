@@ -2,7 +2,7 @@
 node_modules/
 dist/
 npm-debug.log
-static/compressed/
+compressed/
 tpl
 .idea/
 update.tar.gz
@@ -12,6 +12,4 @@ logs
 server/build
 .dll
 .tpl
-.qbear
-qcs.fe.activity.zip
 coverage/
