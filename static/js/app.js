@@ -32,6 +32,11 @@ async function compressImage(filePath, $btn) {
       <img src="${body.data.url}" />
       <div>${body.data.stats.sizeDesc}</div>
     `);
+  }).catch(err => {
+    toast.alert({
+      title: '出错了',
+      text: JSON.stringify(err.stack),
+    });
   });
 }
 
@@ -47,3 +52,13 @@ $('#compress-all').click(function() {
     });
   });
 });
+
+$('#compress-uncompressed').click(function() {
+  axios.post('/api/compress/uncompressed').then(res => {
+    toast.message({
+      text: res.data.message,
+      type: 'success',
+      autoHide: true,
+    });
+  });
+})

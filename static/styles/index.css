@@ -5,16 +5,19 @@
 body {
   padding: 30px 15px;
   word-break: break-all;
-  color: #666;
+  color: #34495e;
+  font-size: 15px;
+  line-height: 1.6;
 }
 h2 {
   text-align: center;
+  font-size: 24px;
 }
 .h-title {
-  border-bottom: 1px solid #999;
+  border-bottom: 1px solid #ccc;
   padding: 10px 0;
   margin: 15px 0;
-  font-size: 24px;
+  font-size: 20px;
 }
 img {
   max-height: 300px;
@@ -31,7 +34,7 @@ img {
 
 .number-lg {
   font-weight: bold;
-  font-size: 60px;
+  font-size: 50px;
   color: #28a745;
 }
 

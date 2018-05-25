@@ -25,15 +25,19 @@ if (args.length === 3) {
 }
 
 function statsAFile(file) {
-  const res = fs.statSync(file);
-  res.sizeDesc = Math.round(res.size / 1024) + 'KB';
-  return res;
+  try {
+    const res = fs.statSync(file);
+    res.sizeDesc = Math.round(res.size / 1024) + 'KB';
+    return res;
+  } catch(e) {
+    return {};
+  }
 }
 
 const md5 = crypto.createHash('md5');
-const targetDirHash = md5.update(path.resolve(ImageRoot)).digest('hex');
+const TargetDirHash = md5.update(path.resolve(ImageRoot)).digest('hex');
 // 本地文件夹目录
-const targetRoot = './compressed/' + targetDirHash;
+const targetRoot = './compressed/' + TargetDirHash;
 
 // Array: ['{ImageRoot}/page/activity/citySetup/assets/coupon_p1.png', ...]
 function getAllFiles() {
@@ -88,16 +92,14 @@ router.get('/api/images', async ctx => {
   }
 });
 
-// 压缩单张图片
-router.post('/api/compress-img', async (ctx, next) => {
-  const file = ctx.request.body.filePath;
+function compressOneImage(file) {
   // 原图的绝对路径
   const fileAbsolutePath = path.resolve(ImageRoot + file);
 
   // 目标文件夹
-  const targetDir = './compressed/' + targetDirHash + path.dirname(file);
+  const targetDir = './compressed/' + TargetDirHash + path.dirname(file);
   mkdirp.sync(targetDir);
-  const targetFile = './compressed/' + targetDirHash + file;
+  const targetFile = './compressed/' + TargetDirHash + file;
 
   try {
     fs.unlinkSync(targetFile);
@@ -107,8 +109,17 @@ router.post('/api/compress-img', async (ctx, next) => {
 
   const cmdDesc = `zop ${fileAbsolutePath} ${targetFile}`;
   console.log('执行命令：', cmdDesc);
-  const res = await exec(cmdDesc);
-  // console.log(res);
+  return exec(cmdDesc).catch(err => err);
+}
+
+// 压缩单张图片
+router.post('/api/compress-img', async (ctx, next) => {
+  // "/part-3/chapter-6-vue/vue-logo.png"
+  const file = ctx.request.body.filePath;
+  const res = await compressOneImage(file);
+
+  const targetFile = './compressed/' + TargetDirHash + file;
+
   ctx.body = {
     success: true,
     message: res,
@@ -116,6 +127,21 @@ router.post('/api/compress-img', async (ctx, next) => {
       url: targetFile.replace('./compressed', ''),
       stats: statsAFile(targetFile),
     }
+  };
+});
+
+
+// 仅压缩未压缩的图片
+router.post('/api/compress/uncompressed', async (ctx, next) => {
+  const all = getAllFiles();
+  const unCompressedImages = all.files.filter(item => !item.compressed);
+  unCompressedImages.forEach(item => {
+    compressOneImage(item.img);
+  });
+
+  ctx.body = {
+    success: true,
+    message: '正在压缩，请随时刷新页面',
   };
 });
 

@@ -4,12 +4,13 @@
   <title></title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="/styles/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/styles/toast2.css">
   <link rel="stylesheet" type="text/css" href="/styles/index.css">
-  <link href="https://v4.bootcss.com/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
   <div class="container">
-    <h2>PNG无损压缩本地服务</h2>
+    <h2>PNG 图片无损压缩工具</h2>
     <div class="report panel">
       <h3 class="h-title">工作目录</h3>
       <div><label>原始图片所在目录：</label><code>{{workingDir}}</code></div>
@@ -19,7 +20,7 @@
         <div>
           <div><label>图片总数量</label></div>
           <div class="number-lg">{{files.length}}</div>
-          <button class="btn btn-success" id="compress-all">全部压缩</button>
+          <button class="btn btn-success btn-sm" id="compress-all">全部压缩</button>
         </div>
         <div class="math-operator">=</div>
         <div>
@@ -30,7 +31,7 @@
         <div>
           <div><label>未压缩图片数量</label></div>
           <div class="number-lg">{{files.length - numberOfCompressedImages}}</div>
-          <button class="btn btn-success">全部压缩</button>
+          <button class="btn btn-success btn-sm" id="compress-uncompressed">全部压缩</button>
         </div>
       </div>
     </div>
@@ -39,7 +40,7 @@
       <li class="list-group-item">
         <div class="row">
           <div class="col-sm-6">原图片</div>
-          <div class="col-sm-6">压缩后的图片</div>
+          <div class="col-sm-6">压缩后</div>
         </div>
       </li>
       {% for item in files %}
@@ -49,7 +50,7 @@
             <div class="col-sm-6 left">
               <img src="{{ item.img }}" />
               <p>{{ item.stats.sizeDesc }}</p>
-              <button class="btn btn-primary" data-src="{{ item.img }}">开始压缩</button>
+              <button class="btn btn-primary btn-sm" data-src="{{ item.img }}">开始压缩</button>
             </div>
             <div class="col-sm-6">
               {% if item.compressed %}
@@ -63,7 +64,8 @@
     </ul>
   </div>
   <script type="text/javascript" src="/js/jquery.js"></script>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script type="text/javascript" src="/js/toast2.js"></script>
+  <script src="/js/axios.min.js"></script>
   <script type="text/javascript" src="/js/app.js"></script>
 </body>
 </html>
