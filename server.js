@@ -45,6 +45,8 @@ function getAllFiles() {
     filePath: path.resolve(item),
   }));
 
+  let numberOfCompressedImages = 0;
+
   files.forEach(item => {
     const t = targetRoot + item.img;
     if (fs.existsSync(t)) {
@@ -52,6 +54,8 @@ function getAllFiles() {
         url: t.replace('./compressed', ''),
         stats: statsAFile(t),
       };
+
+      numberOfCompressedImages++;
     } else {
       item.compressed = null;
     }
@@ -59,7 +63,10 @@ function getAllFiles() {
 
   // const resFiles = glob.sync(`${targetRoot}/**/*.png`);
   // console.log(resFiles);
-  return files;
+  return {
+    files,
+    numberOfCompressedImages,
+  };
 }
 
 app.use(serve(ImageRoot));
@@ -70,9 +77,10 @@ var router = new Router();
 
 
 router.get('/api/images', async ctx => {
+  const all = getAllFiles();
   ctx.body = {
-    data: getAllFiles(),
-  };
+    data: all.files,
+  }
 });
 
 // 压缩单张图片
@@ -110,8 +118,10 @@ app.use(router.routes())
   .use(router.allowedMethods());
 
 app.use(async ctx => {
+  const allFiles = getAllFiles();
   const res = nunjucks.render('./template.html', {
-    files: getAllFiles(),
+    files: allFiles.files,
+    numberOfCompressedImages: allFiles.numberOfCompressedImages,
     workingDir: path.resolve(ImageRoot),
     compressedDir: path.resolve(targetRoot),
   });

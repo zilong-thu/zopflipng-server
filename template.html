@@ -11,16 +11,30 @@
   <div class="container">
     <h2>PNG无损压缩本地服务</h2>
     <div class="report panel">
-      <div><label>工作目录：</label><code>{{workingDir}}</code></div>
+      <h3 class="h-title">工作目录</h3>
+      <div><label>原始图片所在目录：</label><code>{{workingDir}}</code></div>
       <div><label>压缩后图片目录：</label><code>{{compressedDir}}</code></div>
-      <div>
-        <div><label>PNG图片总数量：</label></div>
-        <div style="line-height: 40px; display: flex;">
-          <span class="number-lg" style="margin-right: 30px;">{{files.length}}</span>
+      <h3 class="h-title">图片统计</h3>
+      <div class="flex">
+        <div>
+          <div><label>PNG图片总数量：</label></div>
+          <div class="number-lg">{{files.length}}</div>
           <button class="btn btn-success" id="compress-all">全部压缩</button>
+        </div>
+        <div class="math-operator">=</div>
+        <div>
+          <div><label>已压缩图片数量</label></div>
+          <div class="number-lg">{{numberOfCompressedImages}}</div>
+        </div>
+        <div class="math-operator">+</div>
+        <div>
+          <div><label>未压缩图片数量</label></div>
+          <div class="number-lg">{{files.length - numberOfCompressedImages}}</div>
+          <button class="btn btn-success">全部压缩</button>
         </div>
       </div>
     </div>
+    <h3 class="h-title">图片明细</h3>
     <ul class="list-group">
       <li class="list-group-item">
         <div class="row">
@@ -30,11 +44,11 @@
       </li>
       {% for item in files %}
         <li class="list-group-item">
-          <p>文件路径：{{item.img}}</p>
+          <p>文件路径：<code>{{item.img}}</code></p>
           <div class="row">
             <div class="col-sm-6 left">
               <img src="{{ item.img }}" />
-              <div>{{ item.stats.sizeDesc }}</div>
+              <p>{{ item.stats.sizeDesc }}</p>
               <button class="btn btn-primary" data-src="{{ item.img }}">开始压缩</button>
             </div>
             <div class="col-sm-6">
