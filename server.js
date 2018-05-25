@@ -17,8 +17,18 @@ nunjucks.configure({
   noCache: true,
 });
 
+const args = process.argv;
 // 要被压缩的目录
-const ImageRoot  = '../qcs.fe.activity/src';
+let ImageRoot = '../qcs.fe.activity/src';
+if (args.length === 3) {
+  ImageRoot = args[2];
+}
+
+function statsAFile(file) {
+  const res = fs.statSync(file);
+  res.sizeDesc = Math.round(res.size / 1024) + 'KB';
+  return res;
+}
 
 const md5 = crypto.createHash('md5');
 const targetDirHash = md5.update(path.resolve(ImageRoot)).digest('hex');
@@ -31,7 +41,7 @@ function getAllFiles() {
   files = files.map(item => ({
     img: item.replace(ImageRoot, ''),
     filename: item,
-    stats: fs.statSync(item),
+    stats: statsAFile(item),
     filePath: path.resolve(item),
   }));
 
@@ -40,7 +50,7 @@ function getAllFiles() {
     if (fs.existsSync(t)) {
       item.compressed = {
         url: t.replace('./compressed', ''),
-        stats: fs.statSync(t),
+        stats: statsAFile(t),
       };
     } else {
       item.compressed = null;
@@ -91,7 +101,7 @@ router.post('/api/compress-img', async (ctx, next) => {
     message: res,
     data: {
       url: targetFile.replace('./compressed', ''),
-      stats: fs.statSync(targetFile),
+      stats: statsAFile(targetFile),
     }
   };
 });

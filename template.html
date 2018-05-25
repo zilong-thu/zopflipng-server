@@ -4,30 +4,22 @@
   <title></title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <style type="text/css">
-    body {
-      padding: 30px 15px;
-      word-break: break-all;
-      color: #333;
-    }
-    img {
-      max-height: 300px;
-      max-width: 100%;
-    }
-
-    .left {
-      border-right: 1px solid #eee;
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="/styles/index.css">
   <link href="https://v4.bootcss.com/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
   <div class="container">
-    <h2>Zopflipng 无损压缩</h2>
-    <div class="report">
+    <h2>PNG无损压缩本地服务</h2>
+    <div class="report panel">
       <div><label>工作目录：</label><code>{{workingDir}}</code></div>
-      <div><label>PNG图片总数量：</label>{{files.length}}</div>
       <div><label>压缩后图片目录：</label><code>{{compressedDir}}</code></div>
+      <div>
+        <div><label>PNG图片总数量：</label></div>
+        <div style="line-height: 40px; display: flex;">
+          <span class="number-lg" style="margin-right: 30px;">{{files.length}}</span>
+          <button class="btn btn-success" id="compress-all">全部压缩</button>
+        </div>
+      </div>
     </div>
     <ul class="list-group">
       <li class="list-group-item">
@@ -42,13 +34,13 @@
           <div class="row">
             <div class="col-sm-6 left">
               <img src="{{ item.img }}" />
-              <div>{{ item.stats.size }} bytes</div>
-              <button class="btn btn-primary" data-src="{{ item.img }}">zopflipng</button>
+              <div>{{ item.stats.sizeDesc }}</div>
+              <button class="btn btn-primary" data-src="{{ item.img }}">开始压缩</button>
             </div>
             <div class="col-sm-6">
               {% if item.compressed %}
                 <img src="{{ item.compressed.url }}">
-                <div>{{ item.compressed.stats.size }} bytes</div>
+                <div>{{ item.compressed.stats.sizeDesc }}</div>
               {% endif %}
             </div>
           </div>
