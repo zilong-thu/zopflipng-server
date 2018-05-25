@@ -55,6 +55,11 @@ function getAllFiles() {
         stats: statsAFile(t),
       };
 
+      const oldSize = item.stats.size;
+      const newSize = item.compressed.stats.size;
+
+      item.sizeSaveRatio = Math.round(newSize / oldSize * 100);
+
       numberOfCompressedImages++;
     } else {
       item.compressed = null;

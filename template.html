@@ -54,7 +54,7 @@
             <div class="col-sm-6">
               {% if item.compressed %}
                 <img src="{{ item.compressed.url }}">
-                <div>{{ item.compressed.stats.sizeDesc }}</div>
+                <p>{{ item.compressed.stats.sizeDesc }}（是原图的 {{ item.sizeSaveRatio }}%）</p>
               {% endif %}
             </div>
           </div>
