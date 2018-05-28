@@ -61,4 +61,17 @@ $('#compress-uncompressed').click(function() {
       autoHide: true,
     });
   });
-})
+});
+
+$('[data-role="replace-original-image"]').click(function(e) {
+  var $ele = $(this);
+  console.log($ele);
+  var $li = $ele.closest('[data-src]');
+  var imgSrc = $li.data('src');
+
+  axios.post('/api/replace', {
+    filePath: imgSrc
+  }).then(res => {
+    window.location.reload();
+  });
+});

@@ -162,6 +162,27 @@ router.post('/api/compress/uncompressed', async (ctx, next) => {
   };
 });
 
+
+// 替换一张图片
+router.post('/api/replace', async ctx => {
+  const file = ctx.request.body.filePath;
+  console.log(file);
+  const filePath = ImageRoot + file;
+
+  try {
+    fs.unlinkSync(filePath);
+    fs.copyFileSync(targetRoot + file, filePath);
+    ctx.body = {
+      success: true,
+    };
+  } catch(err) {
+    ctx.body = {
+      success: false,
+      error: err,
+    };
+  }
+});
+
 app.use(router.routes())
   .use(router.allowedMethods());
 

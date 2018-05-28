@@ -47,7 +47,7 @@
         </div>
       </li>
       {% for item in files %}
-        <li class="list-group-item">
+        <li class="list-group-item" data-src="{{ item.img }}">
           <p>文件路径：<code>{{item.img}}</code></p>
           <div class="row">
             <div class="col-sm-6 left">
@@ -59,6 +59,9 @@
               {% if item.compressed %}
                 <img src="{{ item.compressed.url }}">
                 <p>{{ item.compressed.stats.sizeDesc }}（是原图的 {{ item.sizeSaveRatio }}%）</p>
+                <div>
+                  <button class="btn btn-dark btn-sm" data-role="replace-original-image">替换原图</button>
+                </div>
               {% endif %}
             </div>
           </div>
