@@ -27,11 +27,15 @@ if (args.length === 3) {
 function statsAFile(file) {
   try {
     const res = fs.statSync(file);
-    res.sizeDesc = Math.round(res.size / 1024) + 'KB';
+    res.sizeDesc = humanizeNum(res.size);
     return res;
   } catch(e) {
     return {};
   }
+}
+
+function humanizeNum(size = 0) {
+  return Math.round(size / 1024) + 'KB';
 }
 
 const md5 = crypto.createHash('md5');
@@ -49,10 +53,18 @@ function getAllFiles() {
     filePath: path.resolve(item),
   }));
 
+  // 已压缩的图片
   let numberOfCompressedImages = 0;
+  // 原始图片的总体积
+  let totalSize = 0;
+  // 压缩过的图片总体积
+  let totalSizeAfter = 0;
+  // 未压缩的图片的总体积
+  let sizeOfUncompressedImages = 0;
 
   files.forEach(item => {
     const t = targetRoot + item.img;
+    totalSize += item.stats.size;
     if (fs.existsSync(t)) {
       item.compressed = {
         url: t.replace('./compressed', ''),
@@ -61,12 +73,14 @@ function getAllFiles() {
 
       const oldSize = item.stats.size;
       const newSize = item.compressed.stats.size;
+      totalSizeAfter += newSize;
 
       item.sizeSaveRatio = Math.round(newSize / oldSize * 100);
 
       numberOfCompressedImages++;
     } else {
       item.compressed = null;
+      sizeOfUncompressedImages += item.stats.size;
     }
   });
 
@@ -75,6 +89,9 @@ function getAllFiles() {
   return {
     files,
     numberOfCompressedImages,
+    sizeOfUncompressedImages,
+    totalSize,
+    totalSizeAfter,
   };
 }
 
@@ -151,8 +168,10 @@ app.use(router.routes())
 app.use(async ctx => {
   const allFiles = getAllFiles();
   const res = nunjucks.render('./template.html', {
-    files: allFiles.files,
-    numberOfCompressedImages: allFiles.numberOfCompressedImages,
+    ...allFiles,
+    totalSizeDesc: humanizeNum(allFiles.totalSize),
+    totalSizeAfterDesc: humanizeNum(allFiles.totalSizeAfter),
+    sizeOfUncompressedImagesDesc: humanizeNum(allFiles.sizeOfUncompressedImages),
     workingDir: path.resolve(ImageRoot),
     compressedDir: path.resolve(targetRoot),
   });

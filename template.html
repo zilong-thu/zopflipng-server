@@ -20,17 +20,20 @@
         <div>
           <div><label>图片总数量</label></div>
           <div class="number-lg">{{files.length}}</div>
+          <div>{{totalSizeDesc}}</div>
           <button class="btn btn-success btn-sm" id="compress-all">全部压缩</button>
         </div>
         <div class="math-operator">=</div>
         <div>
           <div><label>已压缩图片数量</label></div>
           <div class="number-lg">{{numberOfCompressedImages}}</div>
+          <div>{{totalSizeAfterDesc}}</div>
         </div>
         <div class="math-operator">+</div>
         <div>
           <div><label>未压缩图片数量</label></div>
           <div class="number-lg">{{files.length - numberOfCompressedImages}}</div>
+          <div>{{sizeOfUncompressedImagesDesc}}</div>
           <button class="btn btn-success btn-sm" id="compress-uncompressed">全部压缩</button>
         </div>
       </div>
