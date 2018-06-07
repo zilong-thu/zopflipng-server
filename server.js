@@ -124,7 +124,7 @@ function compressOneImage(file) {
 
   }
 
-  const cmdDesc = `zop ${fileAbsolutePath} ${targetFile}`;
+  const cmdDesc = `zopflipng ${fileAbsolutePath} ${targetFile}`;
   console.log('执行命令：', cmdDesc);
   return exec(cmdDesc).catch(err => err);
 }
